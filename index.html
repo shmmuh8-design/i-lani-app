@@ -753,12 +753,41 @@ ${hasImg?'الصورة المرفقة هي صورة المنتج الذي يُع
   }finally{ btn.disabled=false; }
 });
 
+/* ---------- iPhone app (Capacitor): save & share through the iOS share sheet ---------- */
+const Cap = window.Capacitor;
+const isNative = !!(Cap && Cap.isNativePlatform && Cap.isNativePlatform());
+const plug = n => isNative ? ((Cap.Plugins && Cap.Plugins[n]) || (Cap.registerPlugin ? Cap.registerPlugin(n) : null)) : null;
+const FS = plug('Filesystem'), SH = plug('Share'), HP = plug('Haptics');
+function blobToBase64(blob){
+  return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(',')[1]); r.onerror=rej; r.readAsDataURL(blob); });
+}
+async function nativeShare(blob,name){
+  if(!isNative||!FS||!SH) return false;
+  try{
+    const safe=(name||'ilani').replace(/[^\w؀-ۿ.\-]+/g,'-');
+    const w=await FS.writeFile({path:safe,data:await blobToBase64(blob),directory:'CACHE'});
+    if(HP) HP.impact({style:'LIGHT'}).catch(()=>{});
+    await SH.share({title:'إعلاني',files:[w.uri],dialogTitle:'احفظ أو شارك الإعلان'});
+  }catch(e){
+    const msg=String((e&&e.message)||e||'');
+    if(!/cancel/i.test(msg)) toast('تعذّر فتح المشاركة. جرّب مرة ثانية.');
+  }
+  return true;
+}
+if(isNative){
+  document.documentElement.classList.add('native-app');
+  $('#saveBtn').textContent='احفظ أو شارك الصورة';
+  $('#videoBtn').textContent='احفظ أو شارك الفيديو';
+  if(HP) document.addEventListener('click',e=>{ if(e.target.closest('.chips label,.seg label,.btn')) HP.impact({style:'LIGHT'}).catch(()=>{}); },true);
+}
+
 $('#saveBtn').addEventListener('click',()=>{
   draw();
   canvas.toBlob(async blob=>{
     if(!blob){ toast('تعذّر تجهيز الصورة.'); return; }
     const base=(state.product||state.shop.name||'اعلان').replace(/[\\/:*?"<>|]+/g,'').trim().slice(0,40)||'اعلان';
     const name=`${base}-${state.format==='story'?'ستوري':'بوست'}.png`;
+    if(await nativeShare(blob,name)) return;
     if(downloads){
       try{ await downloads.save({filename:name,data:blob}); toast('تم حفظ الصورة.'); }
       catch(e){ if(e&&e.code==='declined') return; if(e&&e.code==='rate_limited'){toast('انتظر لحظة ثم جرّب.');return;} fallbackSave(blob,name); }
@@ -824,7 +853,7 @@ $('#videoBtn').addEventListener('click',async()=>{
     rec.stop(); await done;
     state.recording=false; state.zoom=1; state.cur=prevCur;
     state.media.forEach(m=>{ if(m.kind==='video'){ m.el.loop=true; m.el.muted=true; }});
-    btns.forEach(b=>b.disabled=false); $('#videoBtn').textContent='حمّل فيديو';
+    btns.forEach(b=>b.disabled=false); $('#videoBtn').textContent=isNative?'احفظ أو شارك الفيديو':'حمّل فيديو';
     syncCurrent();
   }
   const type=rec.mimeType||mime||'video/webm';
@@ -833,6 +862,7 @@ $('#videoBtn').addEventListener('click',async()=>{
   const ext=type.includes('mp4')?'mp4':'webm';
   const base=(state.product||state.shop.name||'اعلان').replace(/[\\/:*?"<>|]+/g,'').trim().slice(0,40)||'اعلان';
   const name=`${base}-${state.format==='story'?'ستوري':'بوست'}.${ext}`;
+  if(await nativeShare(blob,name)) return;
   if(downloads){
     try{ await downloads.save({filename:name,data:blob}); toast('تم حفظ الفيديو.'); }
     catch(e){ if(e&&e.code==='declined') return; fallbackSave(blob,name); }

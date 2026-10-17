@@ -1,0 +1,65 @@
+# بناء تطبيق إعلاني للآيفون على أجهزة ماك في Codemagic ورفعه إلى TestFlight
+workflows:
+  ilani-ios:
+    name: إعلاني — آيفون
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    working_directory: ios-app
+    integrations:
+      app_store_connect: manakh_asc        # نفس مفتاح App Store Connect حق مناخ (يصلح لكل التطبيقات)
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.salemaljabri.ilani
+      node: 20
+      xcode: latest
+    triggering:
+      events:                              # يشتغل يدويًا من اللوحة، أو تلقائيًا عند أي تحديث على فرع ios-build
+        - push
+      branch_patterns:
+        - pattern: 'ios-build'
+          include: true
+          source: true
+    scripts:
+      - name: تثبيت الحزم وتجهيز ملفات الموقع
+        script: |
+          npm install
+          npm run build
+      - name: إنشاء مشروع iOS
+        script: |
+          [ -d ios ] || npx cap add ios
+          # Apple تطلب iOS 15 كحد أدنى
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 15.0;/g' ios/App/App.xcodeproj/project.pbxproj
+          [ -f ios/App/Podfile ] && sed -i '' "s/platform :ios, .*/platform :ios, '15.0'/" ios/App/Podfile
+          npm run assets
+          npx cap sync ios
+      - name: إعدادات التطبيق (الاسم، الكاميرا، الصور، الاتجاه، اللغة)
+        script: |
+          PLIST=ios/App/App/Info.plist
+          pb(){ /usr/libexec/PlistBuddy -c "Delete :$1" $PLIST 2>/dev/null || true; /usr/libexec/PlistBuddy -c "Add :$1 $2 $3" $PLIST; }
+          pb CFBundleDisplayName string "إعلاني"
+          pb NSCameraUsageDescription string "يستخدم إعلاني الكاميرا لتصوير منتجك وتحويله إلى إعلان جاهز"
+          pb NSPhotoLibraryUsageDescription string "يستخدم إعلاني صورك لاختيار صورة أو فيديو المنتج وشعار المحل"
+          pb NSPhotoLibraryAddUsageDescription string "يحفظ إعلاني الإعلانات التي تصممها في الصور"
+          pb NSMicrophoneUsageDescription string "يستخدم إعلاني الميكروفون عند تصوير فيديو للمنتج"
+          pb ITSAppUsesNonExemptEncryption bool false
+          /usr/libexec/PlistBuddy -c "Set :CFBundleDevelopmentRegion ar" $PLIST || true
+          /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations" $PLIST || true
+          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations array" $PLIST
+          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations:0 string UIInterfaceOrientationPortrait" $PLIST
+      - name: التوقيع
+        script: xcode-project use-profiles
+      - name: رقم البناء
+        script: |
+          cd ios/App
+          agvtool new-version -all $((BUILD_NUMBER + 1))
+      - name: بناء ملف IPA
+        script: |
+          xcode-project build-ipa --workspace ios/App/App.xcworkspace --scheme App
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - ios-app/build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false     # النسخة تظهر في TestFlight للمختبر الداخلي (أنت) بدون مراجعة

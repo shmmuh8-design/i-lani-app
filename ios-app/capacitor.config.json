@@ -1,0 +1,9 @@
+{
+  "appId": "com.salemaljabri.ilani",
+  "appName": "إعلاني",
+  "webDir": "www",
+  "backgroundColor": "#0F5257",
+  "ios": {
+    "contentInset": "never"
+  }
+}
