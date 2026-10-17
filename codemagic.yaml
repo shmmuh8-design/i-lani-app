@@ -44,6 +44,10 @@ workflows:
           pb NSMicrophoneUsageDescription string "يستخدم إعلاني الميكروفون عند تصوير فيديو للمنتج"
           pb ITSAppUsesNonExemptEncryption bool false
           /usr/libexec/PlistBuddy -c "Set :CFBundleDevelopmentRegion ar" $PLIST || true
+          /usr/libexec/PlistBuddy -c "Delete :CFBundleLocalizations" $PLIST 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleLocalizations array" $PLIST
+          /usr/libexec/PlistBuddy -c "Add :CFBundleLocalizations:0 string ar" $PLIST
+          /usr/libexec/PlistBuddy -c "Add :CFBundleLocalizations:1 string en" $PLIST
           /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations" $PLIST || true
           /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations array" $PLIST
           /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations:0 string UIInterfaceOrientationPortrait" $PLIST
