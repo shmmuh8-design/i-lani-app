@@ -30,6 +30,8 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
+html,body{overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:20}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1080px;margin:0 auto;padding:20px 16px 120px}
 header.top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:18px}
@@ -58,7 +60,12 @@ details.shop summary .hint{font-family:var(--body);font-weight:400;color:var(--m
 label.f{display:block;font-size:.9rem;color:var(--muted);margin:10px 0 4px}
 input[type=text],input[type=tel],input[type=number],textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
 textarea{min-height:110px;resize:vertical}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.row>*,.grid>*{min-width:0}
+input,textarea,select{min-width:0;max-width:100%}
+.drop span{overflow-wrap:anywhere}
+.filebtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px 14px;font-size:.9rem;cursor:pointer}
+.filebtn:focus-within{outline:3px solid var(--saffron);outline-offset:2px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips input{position:absolute;opacity:0;pointer-events:none}
 .chips label,.seg label{display:inline-flex;align-items:center;justify-content:center;padding:9px 14px;border-radius:999px;background:var(--chip);border:1px solid transparent;cursor:pointer;font-size:.92rem;user-select:none}
@@ -135,8 +142,9 @@ button{font:inherit;cursor:pointer}
             <div class="color-row"><input type="color" id="shopColor" value="#0F5257"><span class="small" data-i18n="colorHint">يُستخدم في الإعلانات العادية</span></div>
           </div>
           <div>
-            <label class="f" for="logoInput" data-i18n="logo">الشعار</label>
-            <input type="file" id="logoInput" accept="image/*" style="font-size:.85rem;max-width:100%">
+            <span class="f" style="display:block;font-size:.9rem;color:var(--muted);margin:10px 0 4px" data-i18n="logo">الشعار</span>
+            <label class="filebtn" for="logoInput"><span aria-hidden="true">🖼️</span><span data-i18n="pickLogo">اختر الشعار</span></label>
+            <input type="file" id="logoInput" accept="image/*" hidden>
           </div>
         </div>
         <button class="btn btn-ghost" id="clearLogo" type="button" style="margin-top:10px;padding:8px 14px" hidden data-i18n="clearLogo">إزالة الشعار</button>
@@ -205,7 +213,7 @@ const $ = s => document.querySelector(s);
 /* ---------- interface language (Arabic / English) ---------- */
 const I18N={
  ar:{title:'إعلاني',docTitle:'إعلاني | مصمم الإعلان الفوري',tag:'صوّر منتجك، واطلع بإعلان جاهز للنشر خلال دقيقة.',aPreview:'معاينة الإعلان',aSize:'المقاس',fmtSq:'بوست مربع',fmtSt:'ستوري وحالة واتساب',
-  shop:'بيانات المحل',shopHint:'تُحفظ على جهازك',shopName:'اسم المحل',phShop:'مثال: عطور اللبان',shopPhone:'رقم الواتساب',shopColor:'لون المحل',colorHint:'يُستخدم في الإعلانات العادية',logo:'الشعار',clearLogo:'إزالة الشعار',
+  shop:'بيانات المحل',shopHint:'تُحفظ على جهازك',shopName:'اسم المحل',phShop:'مثال: عطور اللبان',shopPhone:'رقم الواتساب',shopColor:'لون المحل',colorHint:'يُستخدم في الإعلانات العادية',logo:'الشعار',pickLogo:'اختر الشعار',clearLogo:'إزالة الشعار',
   s1:'صورة المنتج',dropT:'أضف صور أو فيديو للمنتج',dropS:'تقدر تختار أكثر من صورة وفيديو. الصور على خلفية سادة تعطي أفضل نتيجة',rmBg:'إزالة الخلفية الفاتحة',rmBgS:'تعمل مع الصور على خلفية بيضاء أو لون واحد',
   s2:'تفاصيل المنتج',product:'اسم المنتج',phProduct:'مثال: دهن عود كمبودي',price:'السعر (ر.ع)',oldPrice:'السعر قبل الخصم',phOpt:'اختياري',note:'ملاحظة للإعلان',phNote:'اختياري: توصيل مجاني، الكمية محدودة…',
   s3:'المناسبة والشكل',occ:'المناسبة',layout:'القالب',adLang:'لغة الإعلان',s4:'نص الإعلان',ai:'اكتب النص بالذكاء الاصطناعي',headline:'العنوان',phNoHead:'بدون عنوان',aClrHead:'حذف العنوان',sub:'السطر الثاني',phNoSub:'بدون سطر ثاني',aClrSub:'حذف السطر الثاني',cta:'زر الطلب',caption:'نص البوست (للنسخ مع الصورة)',
@@ -217,7 +225,7 @@ const I18N={
   aiWorking:'يكتب النص الآن…',aiDone:'تم. عدّل أي كلمة تريدها مباشرة.',aiDenied:'لم يُسمح باستخدام الذكاء الاصطناعي. النص الجاهز ما زال يعمل.',aiBusy:'طلبات كثيرة الآن. جرّب بعد دقيقة.',aiFail:'تعذّرت كتابة النص الآن. النص الجاهز ما زال يعمل.',
   langBtn:'EN',langAria:'Switch to English'},
  en:{title:'Ilani',docTitle:'Ilani | Instant Ad Maker',tag:'Snap your product and get a ready-to-post ad in a minute.',aPreview:'Ad preview',aSize:'Size',fmtSq:'Square post',fmtSt:'Story & WhatsApp status',
-  shop:'Shop details',shopHint:'Saved on your device',shopName:'Shop name',phShop:'e.g. Frankincense Perfumes',shopPhone:'WhatsApp number',shopColor:'Shop colour',colorHint:'Used in the regular ads',logo:'Logo',clearLogo:'Remove logo',
+  shop:'Shop details',shopHint:'Saved on your device',shopName:'Shop name',phShop:'e.g. Frankincense Perfumes',shopPhone:'WhatsApp number',shopColor:'Shop colour',colorHint:'Used in the regular ads',logo:'Logo',pickLogo:'Choose logo',clearLogo:'Remove logo',
   s1:'Product photo',dropT:'Add product photos or video',dropS:'You can pick several photos and videos. Photos on a plain background give the best result',rmBg:'Remove light background',rmBgS:'Works with photos on a white or single-colour background',
   s2:'Product details',product:'Product name',phProduct:'e.g. Cambodian oud oil',price:'Price (OMR)',oldPrice:'Price before discount',phOpt:'Optional',note:'Note for the ad',phNote:'Optional: free delivery, limited stock…',
   s3:'Occasion & style',occ:'Occasion',layout:'Template',adLang:'Ad language',s4:'Ad text',ai:'Write the text with AI',headline:'Headline',phNoHead:'No headline',aClrHead:'Clear headline',sub:'Second line',phNoSub:'No second line',aClrSub:'Clear second line',cta:'Order button',caption:'Post caption (to copy with the image)',
@@ -324,10 +332,10 @@ function presetCaption(){
   const t = PRESET[L][state.occasion];
   let s='';
   if(L==='en'){
-    s = `${t[0]||p} ✨\n${p}${price?` for only ${price} ${cur}`:''}${old?` (was ${old} ${cur})`:''}.\n${state.note?state.note+'\n':''}${phone?`📲 Order on WhatsApp: ${phone}`:''}${shop?`\n${shop}`:''}`;
+    s = `${t[0]||p} ✨\n${t[0]?p:''}${price?`${t[0]?' for only':'Only'} ${price} ${cur}`:''}${old?` (was ${old} ${cur})`:''}.\n${state.note?state.note+'\n':''}${phone?`📲 Order on WhatsApp: ${phone}`:''}${shop?`\n${shop}`:''}`;
   } else {
     const only = L==='om'?'بس':'فقط';
-    s = `${t[0]||p} ✨\n${p}${price?` ب${only} ${price} ${cur}`:''}${old?` بدل ${old} ${cur}`:''}\n${state.note?state.note+'\n':''}${phone?`📲 للطلب واتساب: ${phone}`:''}${shop?`\n${shop}`:''}`;
+    s = `${t[0]||p} ✨\n${t[0]?p+' ':''}${price?`ب${only} ${price} ${cur}`:''}${old?` بدل ${old} ${cur}`:''}\n${state.note?state.note+'\n':''}${phone?`📲 للطلب واتساب: ${phone}`:''}${shop?`\n${shop}`:''}`;
   }
   return s.trim();
 }
