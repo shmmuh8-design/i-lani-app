@@ -35,6 +35,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font
 header.top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 header.top h1{font-family:var(--display);font-weight:800;font-size:2rem;margin:0;letter-spacing:-.01em}
 header.top p{margin:0;color:var(--muted);font-size:.95rem}
+header.top{position:relative;padding-inline-end:64px}
+.langbtn{position:absolute;top:0;inset-inline-end:0;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 16px;font-family:var(--display);font-weight:700;font-size:.9rem}
+.langbtn:focus-visible{outline:3px solid var(--saffron);outline-offset:2px}
 .grid{display:grid;gap:20px}
 @media (min-width:860px){
   .grid{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:start}
@@ -105,82 +108,83 @@ button{font:inherit;cursor:pointer}
 <body>
 <div class="wrap">
   <header class="top">
-    <h1>إعلاني</h1>
-    <p>صوّر منتجك، واطلع بإعلان جاهز للنشر خلال دقيقة.</p>
+    <h1 data-i18n="title">إعلاني</h1>
+    <p data-i18n="tag">صوّر منتجك، واطلع بإعلان جاهز للنشر خلال دقيقة.</p>
+    <button type="button" class="langbtn" id="uiLang" aria-label="Change language">EN</button>
   </header>
 
   <div class="grid">
     <div class="stage">
-      <div class="canvas-box" id="canvasBox"><canvas id="ad" width="1080" height="1080" aria-label="معاينة الإعلان"></canvas></div>
-      <div class="formats seg" role="radiogroup" aria-label="المقاس">
-        <input type="radio" name="format" id="fmt-sq" value="square" checked><label for="fmt-sq">بوست مربع</label>
-        <input type="radio" name="format" id="fmt-st" value="story"><label for="fmt-st">ستوري وحالة واتساب</label>
+      <div class="canvas-box" id="canvasBox"><canvas id="ad" width="1080" height="1080" aria-label="معاينة الإعلان" data-i18n-aria="aPreview"></canvas></div>
+      <div class="formats seg" role="radiogroup" aria-label="المقاس" data-i18n-aria="aSize">
+        <input type="radio" name="format" id="fmt-sq" value="square" checked><label for="fmt-sq" data-i18n="fmtSq">بوست مربع</label>
+        <input type="radio" name="format" id="fmt-st" value="story"><label for="fmt-st" data-i18n="fmtSt">ستوري وحالة واتساب</label>
       </div>
     </div>
 
     <div>
       <details class="shop" id="shopBox">
-        <summary>بيانات المحل <span class="hint" id="shopHint">تُحفظ على جهازك</span></summary>
-        <label class="f" for="shopName">اسم المحل</label>
-        <input type="text" id="shopName" placeholder="مثال: عطور اللبان">
-        <label class="f" for="shopPhone">رقم الواتساب</label>
+        <summary><span data-i18n="shop">بيانات المحل</span> <span class="hint" id="shopHint" data-i18n="shopHint">تُحفظ على جهازك</span></summary>
+        <label class="f" for="shopName" data-i18n="shopName">اسم المحل</label>
+        <input type="text" id="shopName" placeholder="مثال: عطور اللبان" data-i18n-ph="phShop">
+        <label class="f" for="shopPhone" data-i18n="shopPhone">رقم الواتساب</label>
         <input type="tel" id="shopPhone" inputmode="tel" placeholder="9xxxxxxx">
         <div class="row">
           <div>
-            <label class="f" for="shopColor">لون المحل</label>
-            <div class="color-row"><input type="color" id="shopColor" value="#0F5257"><span class="small">يُستخدم في الإعلانات العادية</span></div>
+            <label class="f" for="shopColor" data-i18n="shopColor">لون المحل</label>
+            <div class="color-row"><input type="color" id="shopColor" value="#0F5257"><span class="small" data-i18n="colorHint">يُستخدم في الإعلانات العادية</span></div>
           </div>
           <div>
-            <label class="f" for="logoInput">الشعار</label>
+            <label class="f" for="logoInput" data-i18n="logo">الشعار</label>
             <input type="file" id="logoInput" accept="image/*" style="font-size:.85rem;max-width:100%">
           </div>
         </div>
-        <button class="btn btn-ghost" id="clearLogo" type="button" style="margin-top:10px;padding:8px 14px" hidden>إزالة الشعار</button>
+        <button class="btn btn-ghost" id="clearLogo" type="button" style="margin-top:10px;padding:8px 14px" hidden data-i18n="clearLogo">إزالة الشعار</button>
       </details>
 
       <section class="step">
-        <h2><span class="n">1</span>صورة المنتج</h2>
+        <h2><span class="n">1</span><span data-i18n="s1">صورة المنتج</span></h2>
         <label class="drop" id="drop" tabindex="0">
           <img id="thumb" alt="">
-          <span><strong id="dropTitle">أضف صور أو فيديو للمنتج</strong><br><span id="dropSub">تقدر تختار أكثر من صورة وفيديو. الصور على خلفية سادة تعطي أفضل نتيجة</span></span>
+          <span><strong id="dropTitle" data-i18n="dropT">أضف صور أو فيديو للمنتج</strong><br><span id="dropSub" data-i18n="dropS">تقدر تختار أكثر من صورة وفيديو. الصور على خلفية سادة تعطي أفضل نتيجة</span></span>
           <input type="file" id="photoInput" accept="image/*,video/*" multiple hidden>
         </label>
         <div class="gallery" id="gallery" aria-label="الصور والفيديوهات"></div>
-        <label class="toggle"><input type="checkbox" id="removeBg" checked><span>إزالة الخلفية الفاتحة<small>تعمل مع الصور على خلفية بيضاء أو لون واحد</small></span></label>
+        <label class="toggle"><input type="checkbox" id="removeBg" checked><span><span data-i18n="rmBg">إزالة الخلفية الفاتحة</span><small data-i18n="rmBgS">تعمل مع الصور على خلفية بيضاء أو لون واحد</small></span></label>
       </section>
 
       <section class="step">
-        <h2><span class="n">2</span>تفاصيل المنتج</h2>
-        <label class="f" for="product">اسم المنتج</label>
-        <input type="text" id="product" placeholder="مثال: دهن عود كمبودي">
+        <h2><span class="n">2</span><span data-i18n="s2">تفاصيل المنتج</span></h2>
+        <label class="f" for="product" data-i18n="product">اسم المنتج</label>
+        <input type="text" id="product" placeholder="مثال: دهن عود كمبودي" data-i18n-ph="phProduct">
         <div class="row">
-          <div><label class="f" for="price">السعر (ر.ع)</label><input type="text" id="price" inputmode="decimal" placeholder="12.500"></div>
-          <div><label class="f" for="oldPrice">السعر قبل الخصم</label><input type="text" id="oldPrice" inputmode="decimal" placeholder="اختياري"></div>
+          <div><label class="f" for="price" data-i18n="price">السعر (ر.ع)</label><input type="text" id="price" inputmode="decimal" placeholder="12.500"></div>
+          <div><label class="f" for="oldPrice" data-i18n="oldPrice">السعر قبل الخصم</label><input type="text" id="oldPrice" inputmode="decimal" placeholder="اختياري" data-i18n-ph="phOpt"></div>
         </div>
-        <label class="f" for="note">ملاحظة للإعلان</label>
-        <input type="text" id="note" placeholder="اختياري: توصيل مجاني، الكمية محدودة…">
+        <label class="f" for="note" data-i18n="note">ملاحظة للإعلان</label>
+        <input type="text" id="note" placeholder="اختياري: توصيل مجاني، الكمية محدودة…" data-i18n-ph="phNote">
       </section>
 
       <section class="step">
-        <h2><span class="n">3</span>المناسبة والشكل</h2>
-        <div class="chips" role="radiogroup" aria-label="المناسبة" id="occasions"></div>
-        <label class="f">القالب</label>
-        <div class="chips" role="radiogroup" aria-label="القالب" id="layouts"></div>
-        <label class="f">لغة الإعلان</label>
-        <div class="chips" role="radiogroup" aria-label="اللغة" id="langs"></div>
+        <h2><span class="n">3</span><span data-i18n="s3">المناسبة والشكل</span></h2>
+        <div class="chips" role="radiogroup" aria-label="المناسبة" data-i18n-aria="occ" id="occasions"></div>
+        <label class="f" data-i18n="layout">القالب</label>
+        <div class="chips" role="radiogroup" aria-label="القالب" data-i18n-aria="layout" id="layouts"></div>
+        <label class="f" data-i18n="adLang">لغة الإعلان</label>
+        <div class="chips" role="radiogroup" aria-label="اللغة" data-i18n-aria="adLang" id="langs"></div>
       </section>
 
       <section class="step">
-        <h2><span class="n">4</span>نص الإعلان</h2>
-        <button class="btn btn-ai" id="aiBtn" type="button" hidden>اكتب النص بالذكاء الاصطناعي</button>
+        <h2><span class="n">4</span><span data-i18n="s4">نص الإعلان</span></h2>
+        <button class="btn btn-ai" id="aiBtn" type="button" hidden data-i18n="ai">اكتب النص بالذكاء الاصطناعي</button>
         <p class="status" id="aiStatus" aria-live="polite"></p>
-        <label class="f" for="headline">العنوان</label>
-        <div class="clr"><input type="text" id="headline" placeholder="بدون عنوان"><button type="button" class="clrbtn" data-clear="headline" aria-label="حذف العنوان">×</button></div>
-        <label class="f" for="sub">السطر الثاني</label>
-        <div class="clr"><input type="text" id="sub" placeholder="بدون سطر ثاني"><button type="button" class="clrbtn" data-clear="sub" aria-label="حذف السطر الثاني">×</button></div>
-        <label class="f" for="cta">زر الطلب</label>
+        <label class="f" for="headline" data-i18n="headline">العنوان</label>
+        <div class="clr"><input type="text" id="headline" placeholder="بدون عنوان" data-i18n-ph="phNoHead"><button type="button" class="clrbtn" data-clear="headline" aria-label="حذف العنوان" data-i18n-aria="aClrHead">×</button></div>
+        <label class="f" for="sub" data-i18n="sub">السطر الثاني</label>
+        <div class="clr"><input type="text" id="sub" placeholder="بدون سطر ثاني" data-i18n-ph="phNoSub"><button type="button" class="clrbtn" data-clear="sub" aria-label="حذف السطر الثاني" data-i18n-aria="aClrSub">×</button></div>
+        <label class="f" for="cta" data-i18n="cta">زر الطلب</label>
         <input type="text" id="cta">
-        <label class="f" for="caption">نص البوست (للنسخ مع الصورة)</label>
+        <label class="f" for="caption" data-i18n="caption">نص البوست (للنسخ مع الصورة)</label>
         <textarea id="caption"></textarea>
       </section>
     </div>
@@ -190,26 +194,56 @@ button{font:inherit;cursor:pointer}
 <div class="bar">
   <button class="btn btn-primary" id="saveBtn" type="button">حمّل الصورة</button>
   <button class="btn btn-primary" id="videoBtn" type="button" hidden>حمّل فيديو</button>
-  <button class="btn btn-ghost" id="copyBtn" type="button">انسخ النص</button>
+  <button class="btn btn-ghost" id="copyBtn" type="button" data-i18n="copyBtn">انسخ النص</button>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
 (function(){
 const $ = s => document.querySelector(s);
+
+/* ---------- interface language (Arabic / English) ---------- */
+const I18N={
+ ar:{title:'إعلاني',docTitle:'إعلاني | مصمم الإعلان الفوري',tag:'صوّر منتجك، واطلع بإعلان جاهز للنشر خلال دقيقة.',aPreview:'معاينة الإعلان',aSize:'المقاس',fmtSq:'بوست مربع',fmtSt:'ستوري وحالة واتساب',
+  shop:'بيانات المحل',shopHint:'تُحفظ على جهازك',shopName:'اسم المحل',phShop:'مثال: عطور اللبان',shopPhone:'رقم الواتساب',shopColor:'لون المحل',colorHint:'يُستخدم في الإعلانات العادية',logo:'الشعار',clearLogo:'إزالة الشعار',
+  s1:'صورة المنتج',dropT:'أضف صور أو فيديو للمنتج',dropS:'تقدر تختار أكثر من صورة وفيديو. الصور على خلفية سادة تعطي أفضل نتيجة',rmBg:'إزالة الخلفية الفاتحة',rmBgS:'تعمل مع الصور على خلفية بيضاء أو لون واحد',
+  s2:'تفاصيل المنتج',product:'اسم المنتج',phProduct:'مثال: دهن عود كمبودي',price:'السعر (ر.ع)',oldPrice:'السعر قبل الخصم',phOpt:'اختياري',note:'ملاحظة للإعلان',phNote:'اختياري: توصيل مجاني، الكمية محدودة…',
+  s3:'المناسبة والشكل',occ:'المناسبة',layout:'القالب',adLang:'لغة الإعلان',s4:'نص الإعلان',ai:'اكتب النص بالذكاء الاصطناعي',headline:'العنوان',phNoHead:'بدون عنوان',aClrHead:'حذف العنوان',sub:'السطر الثاني',phNoSub:'بدون سطر ثاني',aClrSub:'حذف السطر الثاني',cta:'زر الطلب',caption:'نص البوست (للنسخ مع الصورة)',
+  copyBtn:'انسخ النص',saveWeb:'حمّل الصورة',videoWeb:'حمّل فيديو',saveApp:'احفظ أو شارك الصورة',videoApp:'احفظ أو شارك الفيديو',recording:(i,n)=>`يسجّل ${i}/${n}…`,
+  photo:'صورة',video:'فيديو',videoTag:'▶ فيديو',remove:'حذف',
+  tLogo:'تعذّر فتح الشعار. جرّب صورة PNG أو JPG.',tBad:n=>`تعذّر فتح ${n} من الملفات.`,tNoCut:'بعض الصور خلفيتها غير سادة، فظهرت داخل إطار.',tNoCut1:'الخلفية غير سادة، فاستخدمنا الصورة كما هي داخل إطار.',
+  tShare:'تعذّر فتح المشاركة. جرّب مرة ثانية.',tImgFail:'تعذّر تجهيز الصورة.',tImgSaved:'تم حفظ الصورة.',tWait:'انتظر لحظة ثم جرّب.',tNoVidSave:'المتصفح لا يدعم حفظ الفيديو هنا.',tLongPress:'اضغط مطوّلاً على المعاينة لحفظ الصورة.',
+  tNoRec:'تسجيل الفيديو غير مدعوم في هذا المتصفح.',tRecFail:'تعذّر بدء تسجيل الفيديو.',tVidFail:'تعذّر تجهيز الفيديو.',tVidSaved:'تم حفظ الفيديو.',tCopied:'تم نسخ النص.',tCopyMan:'حدّد النص وانسخه يدوياً.',
+  aiWorking:'يكتب النص الآن…',aiDone:'تم. عدّل أي كلمة تريدها مباشرة.',aiDenied:'لم يُسمح باستخدام الذكاء الاصطناعي. النص الجاهز ما زال يعمل.',aiBusy:'طلبات كثيرة الآن. جرّب بعد دقيقة.',aiFail:'تعذّرت كتابة النص الآن. النص الجاهز ما زال يعمل.',
+  langBtn:'EN',langAria:'Switch to English'},
+ en:{title:'Ilani',docTitle:'Ilani | Instant Ad Maker',tag:'Snap your product and get a ready-to-post ad in a minute.',aPreview:'Ad preview',aSize:'Size',fmtSq:'Square post',fmtSt:'Story & WhatsApp status',
+  shop:'Shop details',shopHint:'Saved on your device',shopName:'Shop name',phShop:'e.g. Frankincense Perfumes',shopPhone:'WhatsApp number',shopColor:'Shop colour',colorHint:'Used in the regular ads',logo:'Logo',clearLogo:'Remove logo',
+  s1:'Product photo',dropT:'Add product photos or video',dropS:'You can pick several photos and videos. Photos on a plain background give the best result',rmBg:'Remove light background',rmBgS:'Works with photos on a white or single-colour background',
+  s2:'Product details',product:'Product name',phProduct:'e.g. Cambodian oud oil',price:'Price (OMR)',oldPrice:'Price before discount',phOpt:'Optional',note:'Note for the ad',phNote:'Optional: free delivery, limited stock…',
+  s3:'Occasion & style',occ:'Occasion',layout:'Template',adLang:'Ad language',s4:'Ad text',ai:'Write the text with AI',headline:'Headline',phNoHead:'No headline',aClrHead:'Clear headline',sub:'Second line',phNoSub:'No second line',aClrSub:'Clear second line',cta:'Order button',caption:'Post caption (to copy with the image)',
+  copyBtn:'Copy text',saveWeb:'Download image',videoWeb:'Download video',saveApp:'Save or share image',videoApp:'Save or share video',recording:(i,n)=>`Recording ${i}/${n}…`,
+  photo:'Photo',video:'Video',videoTag:'▶ Video',remove:'Remove',
+  tLogo:'Couldn’t open the logo. Try a PNG or JPG image.',tBad:n=>`Couldn’t open ${n} of the files.`,tNoCut:'Some photos don’t have a plain background, so they appear inside a frame.',tNoCut1:'The background isn’t plain, so the photo is shown inside a frame.',
+  tShare:'Couldn’t open sharing. Try again.',tImgFail:'Couldn’t prepare the image.',tImgSaved:'Image saved.',tWait:'Wait a moment, then try again.',tNoVidSave:'This browser can’t save the video here.',tLongPress:'Press and hold the preview to save the image.',
+  tNoRec:'Video recording isn’t supported in this browser.',tRecFail:'Couldn’t start recording the video.',tVidFail:'Couldn’t prepare the video.',tVidSaved:'Video saved.',tCopied:'Text copied.',tCopyMan:'Select the text and copy it.',
+  aiWorking:'Writing the text…',aiDone:'Done. Edit any word you like.',aiDenied:'AI wasn’t allowed. The ready-made text still works.',aiBusy:'Too many requests right now. Try again in a minute.',aiFail:'Couldn’t write the text right now. The ready-made text still works.',
+  langBtn:'ع',langAria:'التبديل إلى العربية'}
+};
+let UI=(()=>{ try{ const v=localStorage.getItem('ilani-ui'); if(v==='ar'||v==='en') return v; }catch(_){} return /^ar/i.test(navigator.language||'ar')?'ar':'en'; })();
+const L=k=>I18N[UI][k];
 const DISP = 'Alexandria, "IBM Plex Sans Arabic", Tahoma, sans-serif';
 const BODY = '"IBM Plex Sans Arabic", Tahoma, sans-serif';
 
 const OCC = [
-  ['normal','عادي'],['sale','تخفيضات'],['ramadan','رمضان'],['eid','العيد'],['national','اليوم الوطني'],['new','منتج جديد']
+  ['normal','عادي','Regular'],['sale','تخفيضات','Sale'],['ramadan','رمضان','Ramadan'],['eid','العيد','Eid'],['national','اليوم الوطني','National Day'],['new','منتج جديد','New arrival']
 ];
-const LAYOUTS = [['classic','كلاسيكي'],['bold','جريء'],['elegant','أنيق']];
-const LANGS = [['om','عماني'],['fu','فصحى'],['en','English']];
+const LAYOUTS = [['classic','كلاسيكي','Classic'],['bold','جريء','Bold'],['elegant','أنيق','Elegant']];
+const LANGS = [['om','عماني','Omani dialect'],['fu','فصحى','Standard Arabic'],['en','English','English']];
 
 const state = {
   shop:{name:'',phone:'',color:'#0F5257',logo:null},
   product:'',price:'',oldPrice:'',note:'',
-  occasion:'normal',layout:'classic',lang:'om',format:'square',removeBg:true,
+  occasion:'normal',layout:'classic',lang:(UI==='en'?'en':'om'),format:'square',removeBg:true,
   headline:'',sub:'',cta:'',caption:'',
   custom:{headline:false,sub:false,cta:false,caption:false},
   src:null, cut:null, logoImg:null, media:[], cur:0, recording:false
@@ -217,11 +251,14 @@ const state = {
 
 /* ---------- chips ---------- */
 function makeChips(el,name,items,current){
-  el.innerHTML = items.map(([v,t])=>`<input type="radio" name="${name}" id="${name}-${v}" value="${v}" ${v===current?'checked':''}><label for="${name}-${v}">${t}</label>`).join('');
+  el.innerHTML = items.map(([v,a,e])=>`<input type="radio" name="${name}" id="${name}-${v}" value="${v}" ${v===current?'checked':''}><label for="${name}-${v}">${UI==='en'?e:a}</label>`).join('');
 }
-makeChips($('#occasions'),'occasion',OCC,state.occasion);
-makeChips($('#layouts'),'layout',LAYOUTS,state.layout);
-makeChips($('#langs'),'lang',LANGS,state.lang);
+function makeAllChips(){
+  makeChips($('#occasions'),'occasion',OCC,state.occasion);
+  makeChips($('#layouts'),'layout',LAYOUTS,state.layout);
+  makeChips($('#langs'),'lang',LANGS,state.lang);
+}
+makeAllChips();
 
 /* ---------- storage ---------- */
 function loadShop(){
@@ -619,7 +656,7 @@ bind('#shopColor',e=>{state.shop.color=e.target.value;saveShop();render();});
 bind('#logoInput',async e=>{
   const f=e.target.files[0]; if(!f) return;
   try{ const im=await fileToImage(f); const c=toCanvas(im,320); state.logoImg=c; state.shop.logo=c.toDataURL('image/png'); saveShop(); $('#clearLogo').hidden=false; render(); }
-  catch(_){ toast('تعذّر فتح الشعار. جرّب صورة PNG أو JPG.'); }
+  catch(_){ toast(L('tLogo')); }
 },'change');
 bind('#clearLogo',()=>{state.logoImg=null;state.shop.logo=null;saveShop();$('#logoInput').value='';$('#clearLogo').hidden=true;render();},'click');
 
@@ -649,11 +686,11 @@ function renderGallery(){
   const g=$('#gallery'); g.innerHTML='';
   state.media.forEach((m,i)=>{
     const b=document.createElement('button'); b.type='button'; b.className='gthumb'+(i===state.cur?' on':'');
-    b.setAttribute('aria-label',(m.kind==='video'?'فيديو ':'صورة ')+(i+1));
+    b.setAttribute('aria-label',(m.kind==='video'?L('video'):L('photo'))+' '+(i+1));
     const im=document.createElement('img'); im.alt=''; im.src=m.thumb; b.appendChild(im);
-    if(m.kind==='video'){ const vb=document.createElement('span'); vb.className='vb'; vb.textContent='▶ فيديو'; b.appendChild(vb); }
+    if(m.kind==='video'){ const vb=document.createElement('span'); vb.className='vb'; vb.textContent=L('videoTag'); b.appendChild(vb); }
     b.onclick=()=>{ if(state.recording) return; state.cur=i; syncCurrent(); };
-    const x=document.createElement('button'); x.type='button'; x.className='gx'; x.textContent='×'; x.setAttribute('aria-label','حذف');
+    const x=document.createElement('button'); x.type='button'; x.className='gx'; x.textContent='×'; x.setAttribute('aria-label',L('remove'));
     x.onclick=ev=>{ ev.stopPropagation(); if(state.recording) return; const [r]=state.media.splice(i,1); if(r.kind==='video'){ r.el.pause(); URL.revokeObjectURL(r.el.src); } if(state.cur>=state.media.length) state.cur=Math.max(0,state.media.length-1); syncCurrent(); };
     b.appendChild(x); g.appendChild(b);
   });
@@ -674,11 +711,11 @@ bind('#photoInput',async e=>{
     }catch(_){ bad++; }
   }
   if(state.media.length>start) state.cur=start;
-  if(bad) toast(`تعذّر فتح ${bad} من الملفات.`);
-  else if(state.removeBg&&noCut) toast('بعض الصور خلفيتها غير سادة، فظهرت داخل إطار.');
+  if(bad) toast(L('tBad')(bad));
+  else if(state.removeBg&&noCut) toast(L('tNoCut'));
   syncCurrent();
 },'change');
-bind('#removeBg',e=>{state.removeBg=e.target.checked; const it=curItem(); if(state.removeBg&&it&&it.kind==='image'&&!it.cut) toast('الخلفية غير سادة، فاستخدمنا الصورة كما هي داخل إطار.'); render();},'change');
+bind('#removeBg',e=>{state.removeBg=e.target.checked; const it=curItem(); if(state.removeBg&&it&&it.kind==='image'&&!it.cut) toast(L('tNoCut1')); render();},'change');
 
 for(const k of ['product','price','oldPrice','note']){
   bind('#'+k,e=>{ state[k]=e.target.value; if(k==='note'&&!state.custom.sub){} applyPresets(); render(); });
@@ -715,7 +752,7 @@ if(window.claude && typeof window.claude.use==='function'){
 $('#aiBtn').addEventListener('click',async()=>{
   if(!sample) return;
   const btn=$('#aiBtn'), st=$('#aiStatus');
-  btn.disabled=true; st.textContent='يكتب النص الآن…';
+  btn.disabled=true; st.textContent=L('aiWorking');
   const langName={om:'اللهجة العمانية (خليجية، قريبة من الناس)',fu:'العربية الفصحى البسيطة',en:'English'}[state.lang];
   const occ={normal:'بدون مناسبة خاصة',sale:'تخفيضات وعروض',ramadan:'شهر رمضان',eid:'العيد',national:'اليوم الوطني العماني',new:'منتج جديد وصل للمحل'}[state.occasion];
   const price=fmt(num(state.price)), old=fmt(num(state.oldPrice));
@@ -743,13 +780,13 @@ ${hasImg?'الصورة المرفقة هي صورة المنتج الذي يُع
     let cap = typeof r.caption==='string'?r.caption.trim():'';
     if(Array.isArray(r.hashtags)&&r.hashtags.length) cap += '\n\n'+r.hashtags.map(h=>String(h).trim()).filter(Boolean).map(h=>h.startsWith('#')?h:'#'+h.replace(/\s+/g,'_')).join(' ');
     set('caption',cap);
-    st.textContent='تم. عدّل أي كلمة تريدها مباشرة.';
+    st.textContent=L('aiDone');
     render();
   }catch(e){
     const code=e&&e.code;
-    st.textContent = code==='not_granted'?'لم يُسمح باستخدام الذكاء الاصطناعي. النص الجاهز ما زال يعمل.'
-      : code==='rate_limited'?'طلبات كثيرة الآن. جرّب بعد دقيقة.'
-      : code==='cancelled'?'' : 'تعذّرت كتابة النص الآن. النص الجاهز ما زال يعمل.';
+    st.textContent = code==='not_granted'?L('aiDenied')
+      : code==='rate_limited'?L('aiBusy')
+      : code==='cancelled'?'' : L('aiFail');
   }finally{ btn.disabled=false; }
 });
 
@@ -770,27 +807,25 @@ async function nativeShare(blob,name){
     await SH.share({title:'إعلاني',files:[w.uri],dialogTitle:'احفظ أو شارك الإعلان'});
   }catch(e){
     const msg=String((e&&e.message)||e||'');
-    if(!/cancel/i.test(msg)) toast('تعذّر فتح المشاركة. جرّب مرة ثانية.');
+    if(!/cancel/i.test(msg)) toast(L('tShare'));
   }
   return true;
 }
 if(isNative){
   document.documentElement.classList.add('native-app');
-  $('#saveBtn').textContent='احفظ أو شارك الصورة';
-  $('#videoBtn').textContent='احفظ أو شارك الفيديو';
   if(HP) document.addEventListener('click',e=>{ if(e.target.closest('.chips label,.seg label,.btn')) HP.impact({style:'LIGHT'}).catch(()=>{}); },true);
 }
 
 $('#saveBtn').addEventListener('click',()=>{
   draw();
   canvas.toBlob(async blob=>{
-    if(!blob){ toast('تعذّر تجهيز الصورة.'); return; }
+    if(!blob){ toast(L('tImgFail')); return; }
     const base=(state.product||state.shop.name||'اعلان').replace(/[\\/:*?"<>|]+/g,'').trim().slice(0,40)||'اعلان';
     const name=`${base}-${state.format==='story'?'ستوري':'بوست'}.png`;
     if(await nativeShare(blob,name)) return;
     if(downloads){
-      try{ await downloads.save({filename:name,data:blob}); toast('تم حفظ الصورة.'); }
-      catch(e){ if(e&&e.code==='declined') return; if(e&&e.code==='rate_limited'){toast('انتظر لحظة ثم جرّب.');return;} fallbackSave(blob,name); }
+      try{ await downloads.save({filename:name,data:blob}); toast(L('tImgSaved')); }
+      catch(e){ if(e&&e.code==='declined') return; if(e&&e.code==='rate_limited'){toast(L('tWait'));return;} fallbackSave(blob,name); }
     } else fallbackSave(blob,name);
   },'image/png');
 });
@@ -799,7 +834,7 @@ function fallbackSave(blob,name){
     const file=new File([blob],name||'ad.png',{type:blob.type||'image/png'});
     if(navigator.canShare&&navigator.canShare({files:[file]})){ navigator.share({files:[file]}).catch(()=>{}); return; }
   }catch(_){}
-  toast(blob.type.startsWith('video')?'المتصفح لا يدعم حفظ الفيديو هنا.':'اضغط مطوّلاً على المعاينة لحفظ الصورة.');
+  toast(blob.type.startsWith('video')?L('tNoVidSave'):L('tLongPress'));
 }
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 let actx=null;
@@ -812,7 +847,7 @@ function pickMime(){
 $('#videoBtn').addEventListener('click',async()=>{
   if(state.recording||!state.media.length) return;
   const mime=pickMime();
-  if(mime===null||!canvas.captureStream){ toast('تسجيل الفيديو غير مدعوم في هذا المتصفح.'); return; }
+  if(mime===null||!canvas.captureStream){ toast(L('tNoRec')); return; }
   // audio from video clips (WebAudio)
   let dest=null;
   try{
@@ -824,7 +859,7 @@ $('#videoBtn').addEventListener('click',async()=>{
   const stream=canvas.captureStream(30);
   if(dest) dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
   let rec; try{ rec=new MediaRecorder(stream, mime?{mimeType:mime,videoBitsPerSecond:6000000}:undefined); }
-  catch(_){ toast('تعذّر بدء تسجيل الفيديو.'); return; }
+  catch(_){ toast(L('tRecFail')); return; }
   const chunks=[]; rec.ondataavailable=ev=>{ if(ev.data&&ev.data.size) chunks.push(ev.data); };
   const done=new Promise(r=>rec.onstop=r);
   const prevCur=state.cur, btns=[$('#saveBtn'),$('#videoBtn'),$('#copyBtn')];
@@ -835,7 +870,7 @@ $('#videoBtn').addEventListener('click',async()=>{
   try{
     for(let i=0;i<state.media.length&&total<LIMIT;i++){
       state.cur=i; const it=state.media[i];
-      $('#videoBtn').textContent=`يسجّل ${i+1}/${state.media.length}…`;
+      $('#videoBtn').textContent=L('recording')(i+1,state.media.length);
       if(it.kind==='image'){
         const dur=3000, s0=performance.now();
         while(performance.now()-s0<dur){ state.zoom=1+.06*((performance.now()-s0)/dur); await wait(30); }
@@ -853,29 +888,45 @@ $('#videoBtn').addEventListener('click',async()=>{
     rec.stop(); await done;
     state.recording=false; state.zoom=1; state.cur=prevCur;
     state.media.forEach(m=>{ if(m.kind==='video'){ m.el.loop=true; m.el.muted=true; }});
-    btns.forEach(b=>b.disabled=false); $('#videoBtn').textContent=isNative?'احفظ أو شارك الفيديو':'حمّل فيديو';
+    btns.forEach(b=>b.disabled=false); $('#videoBtn').textContent=L(isNative?'videoApp':'videoWeb');
     syncCurrent();
   }
   const type=rec.mimeType||mime||'video/webm';
   const blob=new Blob(chunks,{type:type.split(';')[0]});
-  if(!blob.size){ toast('تعذّر تجهيز الفيديو.'); return; }
+  if(!blob.size){ toast(L('tVidFail')); return; }
   const ext=type.includes('mp4')?'mp4':'webm';
   const base=(state.product||state.shop.name||'اعلان').replace(/[\\/:*?"<>|]+/g,'').trim().slice(0,40)||'اعلان';
   const name=`${base}-${state.format==='story'?'ستوري':'بوست'}.${ext}`;
   if(await nativeShare(blob,name)) return;
   if(downloads){
-    try{ await downloads.save({filename:name,data:blob}); toast('تم حفظ الفيديو.'); }
+    try{ await downloads.save({filename:name,data:blob}); toast(L('tVidSaved')); }
     catch(e){ if(e&&e.code==='declined') return; fallbackSave(blob,name); }
   } else fallbackSave(blob,name);
 });
 $('#copyBtn').addEventListener('click',async()=>{
   const text=$('#caption').value;
-  try{ await navigator.clipboard.writeText(text); toast('تم نسخ النص.'); }
-  catch(_){ const ta=$('#caption'); ta.focus(); ta.select(); try{ document.execCommand('copy'); toast('تم نسخ النص.'); }catch(__){ toast('حدّد النص وانسخه يدوياً.'); } }
+  try{ await navigator.clipboard.writeText(text); toast(L('tCopied')); }
+  catch(_){ const ta=$('#caption'); ta.focus(); ta.select(); try{ document.execCommand('copy'); toast(L('tCopied')); }catch(__){ toast(L('tCopyMan')); } }
+});
+
+/* ---------- apply interface language ---------- */
+function applyUI(){
+  const de=document.documentElement; de.lang=UI; de.dir=UI==='ar'?'rtl':'ltr'; document.title=L('docTitle');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=L(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=L(el.dataset.i18nPh); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el=>{ el.setAttribute('aria-label',L(el.dataset.i18nAria)); });
+  if(!state.recording){ $('#saveBtn').textContent=L(isNative?'saveApp':'saveWeb'); $('#videoBtn').textContent=L(isNative?'videoApp':'videoWeb'); }
+  const lb=$('#uiLang'); lb.textContent=L('langBtn'); lb.setAttribute('aria-label',L('langAria'));
+  makeAllChips(); renderGallery();
+}
+$('#uiLang').addEventListener('click',()=>{
+  UI = UI==='ar'?'en':'ar';
+  try{ localStorage.setItem('ilani-ui',UI); }catch(_){}
+  applyUI();
 });
 
 /* ---------- start ---------- */
-loadShop(); applyPresets(); render();
+applyUI(); loadShop(); applyPresets(); render();
 if(document.fonts){
   Promise.all([
     document.fonts.load(`800 80px Alexandria`),document.fonts.load(`700 40px Alexandria`),
